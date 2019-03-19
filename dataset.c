@@ -1,11 +1,14 @@
 #include "dataset.h"
 #include <assert.h>
 
-struct dataset
-{
-    void** elements;
-    size_t length;
-};
+/* Linked list structure */
+       typedef struct list
+       {
+           char *string;
+           int index;
+           struct list *next
+       } list_t ;
+   
 
 // Creates a DATASET from the filename
 DATASET* newDATASET(char* filename)
