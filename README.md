@@ -15,20 +15,20 @@ In your terminal, change the directory to the folder the program is in and input
 gcc -Wall string.c dynamic.c UNORDEREDSET.c UNORDEREDMAP.c main2.c ROW.c -g3
 
 The program will present you with the following options:
-1) Open a new diary (open <diaryname>)
+1) Open a new diary (open <diaryname>) <b>
  To execute this command, input "open" followed by the name of the diary you are trying to create.
  For example, to open a diary named Nehal I would enter the command "open Nehal".
  
  You will now enter into a menu for the diary file:
- a)Insert (insert <name|vendor|keyword> <key>)
+ -a)Insert (insert <name|vendor|keyword> <key>)
  To add a new food into the diary, enter "insert" followed by "<name|vendor|keyword> <key>" where name stands for the exact food name, vendor stands for the manufacturer name and keyword is for a general item you want to search for using a key.
  Once you have the search results displayed, select the item you want to be inserted into your food diary.
- b) Delete (delete)
+ -b) Delete (delete)
  To delete a food from the diary, enter "delete" followed by "<name|vendor|keyword> <key>" where name stands for the exact food name, vendor stands for the manufacturer name and keyword is for a general item you want to delete for using a key.
   This will delete the food item that matches your query.
- c) Print (print)
+-c)Print (print)
  To print the user nutrition diary, enter "print".
- d) Quit (quit)
+-d)Quit (quit)
  Enter "quit" to exit the menu.
  
 2) Update an existing diary (update <diaryname>)
