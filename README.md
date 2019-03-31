@@ -11,27 +11,27 @@ https://drive.google.com/file/d/1CU04kfc18ld8KZqVt0BeBIXa0aTGnjQ6/view?usp=shari
 
 # How to use
 Video Demo Link:
-In your terminal, change the directory to the folder the program is in and input the following command:
-gcc -Wall string.c dynamic.c UNORDEREDSET.c UNORDEREDMAP.c main2.c ROW.c -g3
+In your terminal, change the directory to the folder the program is in and input the following command:</n>
+<b> gcc -Wall string.c dynamic.c UNORDEREDSET.c UNORDEREDMAP.c main2.c ROW.c -g3 </b> </n>
 
 The program will present you with the following options:
-1) Open a new diary (open <diaryname>) <b>
+<b> 1) Open a new diary (open <diaryname>) </b> </n>
  To execute this command, input "open" followed by the name of the diary you are trying to create.
- For example, to open a diary named Nehal I would enter the command "open Nehal".
+ For example, to open a diary named Nehal I would enter the command "open Nehal".</n>
  
- You will now enter into a menu for the diary file:
- -a)Insert (insert <name|vendor|keyword> <key>)
+ You will now enter into a menu for the diary file:</n>
+ <b> a)Insert (insert <name|vendor|keyword> <key>) </b></n>
  To add a new food into the diary, enter "insert" followed by "<name|vendor|keyword> <key>" where name stands for the exact food name, vendor stands for the manufacturer name and keyword is for a general item you want to search for using a key.
- Once you have the search results displayed, select the item you want to be inserted into your food diary.
- -b) Delete (delete)
+ Once you have the search results displayed, select the item you want to be inserted into your food diary.</n>
+ <b> b) Delete (delete)</b></n>
  To delete a food from the diary, enter "delete" followed by "<name|vendor|keyword> <key>" where name stands for the exact food name, vendor stands for the manufacturer name and keyword is for a general item you want to delete for using a key.
-  This will delete the food item that matches your query.
--c)Print (print)
- To print the user nutrition diary, enter "print".
--d)Quit (quit)
- Enter "quit" to exit the menu.
+ This will delete the food item that matches your query.</n>
+ <b> c)Print (print) </b></n>
+ To print the user nutrition diary, enter "print".</n>
+<b> d)Quit (quit)</b> </n>
+ Enter "quit" to exit the menu.</n>
  
-2) Update an existing diary (update <diaryname>)
+<b> 2) Update an existing diary (update <diaryname>) </b></n>
  Use this command to open and update a diary that has already been created. To execute this command, input "update" followed by the name    of the diary you want to update.
  For example, to update the diary Nehal input "update Nehal".
   
