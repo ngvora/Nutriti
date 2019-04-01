@@ -1,4 +1,5 @@
 #include "string.h"
+#include <ctype.h>
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -28,6 +29,18 @@ STRING* cloneSTRING(STRING* str)
     return newSTRING(str->buffer);
 }
 
+STRING* upperSTRING(STRING* str)
+{
+    assert(str != NULL);
+    STRING* new = cloneSTRING(str);
+
+    for (size_t i = 0; new->buffer[i] != '\0'; i++)
+    {
+        new->buffer[i] = toupper(new->buffer[i]);
+    }
+
+    return new;
+}
 STRING* readSTRING(FILE* file, const char* delim, int* last)
 {
     assert(file != NULL);

@@ -266,11 +266,11 @@ STRING* getDiary(DATABASE* database)
             break;
         }
 
-        if (strcmp(getSTRING(command), "list") == 0) {
+	else if (compareSTRING(command, list)) {
             printIndex();
         }
 
-        if (compareSTRING(command, open)) {
+	else if (compareSTRING(command, open)) {
             freeSTRING(command);
             STRING* diaryName = readSTRING(stdin, " \t\n", &terminator);
 
@@ -446,6 +446,10 @@ void useDiary(STRING* diaryName, DATABASE* database, DATABASE* dataset, FILE* ou
                 printf("Error: can not look up on \"%s\"\n", getSTRING(name));
             }
 
+            STRING* upper = upperSTRING(query);
+            freeSTRING(query);
+            query = upper;
+
             if (strcmp(getSTRING(name), "id") == 0) {
                 size_t v;
                 sscanf(getSTRING((STRING*)query), "%zu", &v);
@@ -538,6 +542,10 @@ void useDiary(STRING* diaryName, DATABASE* database, DATABASE* dataset, FILE* ou
                 fprintf(out, "%s %s %s\n", getSTRING(command), getSTRING(name), getSTRING((STRING*)query));
             }
 
+            STRING* upper = upperSTRING(query);
+            freeSTRING(query);
+            query = upper;
+
             if (strcmp(getSTRING(name), "id") == 0) {
                 size_t v;
                 sscanf(getSTRING((STRING*)query), "%zu", &v);
@@ -603,13 +611,13 @@ void useDiary(STRING* diaryName, DATABASE* database, DATABASE* dataset, FILE* ou
 
             UNORDEREDMAP* index = NULL;
 
-            if (strcmp(getSTRING(name), "name") == 0) {
+            /*if (strcmp(getSTRING(name), "name") == 0) {
                 index = database->nameIndex;
             }
             else if (strcmp(getSTRING(name), "vendor") == 0) {
                 index = database->vendorIndex;
             }
-            else if (strcmp(getSTRING(name), "keyword") == 0) {
+            else */if (strcmp(getSTRING(name), "keyword") == 0) {
                 index = database->keywords;
             }
             else if (strcmp(getSTRING(name), "id") == 0) {
