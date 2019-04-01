@@ -7,11 +7,12 @@ Nutrition Diary Food Tracker is an application that allows you to create specifi
 # Files to Download 
 
 FDA Food Database File to be read by the program can be downloaded using this link.</n> Please ensure that you have this file inside the folder of the program for it to work.</n>
+</N>
 https://drive.google.com/file/d/1CU04kfc18ld8KZqVt0BeBIXa0aTGnjQ6/view?usp=sharing
 
 # How to use
 <b>Video Demo Link: </b></n>
-In your terminal, change the directory to the folder the program is in and input the following command:</n>
+</n>In your terminal, change the directory to the folder the program is in and input the following command:</n>
 <b> gcc -Wall string.c dynamic.c UNORDEREDSET.c UNORDEREDMAP.c main2.c ROW.c -g3 </b> </n>
 
 The program will present you with the following options:</n>
