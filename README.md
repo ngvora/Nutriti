@@ -21,15 +21,15 @@ https://drive.google.com/file/d/1CU04kfc18ld8KZqVt0BeBIXa0aTGnjQ6/view?usp=shari
  For example, to open a diary named Nehal I would enter the command "open Nehal".</n>
  
  You will now enter into a menu for the diary file:</n>
- <b>-a)Insert (insert "name|vendor|keyword" "key") </b></n>
+ <b>     -a)Insert (insert "name|vendor|keyword" "key") </b></n>
  To add a new food into the diary, enter "insert" followed by "<name|vendor|keyword> <key>" where name stands for the exact food name, vendor stands for the manufacturer name and keyword is for a general item you want to search for using a key.</n>
  Once you have the search results displayed, select the item you want to be inserted into your food diary.</n>
- <b>-b) Delete (delete)</b></n>
+ <b>     -b) Delete (delete)</b></n>
  To delete a food from the diary, enter "delete" followed by "<name|vendor|keyword> <key>" where name stands for the exact food name, vendor stands for the manufacturer name and keyword is for a general item you want to delete for using a key.
  This will delete the food item that matches your query.</n>
- <b>-c)Print (print) </b></n>
+ <b>     -c)Print (print) </b></n>
  To print the user nutrition diary, enter "print".</n>
-<b>-d)Quit (quit)</b> </n>
+<b>      -d)Quit (quit)</b> </n>
  Enter "quit" to exit the menu.</n>
  </p>
  
