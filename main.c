@@ -1,350 +1,108 @@
-//Nutrition Diary Log System - Nehal Vora CS201
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h> // For exit() function
-#include <string.h>
-#include "string.h"
-#include "UNORDEREDMAP.h"
 #include "ROW.h"
+#include "UNORDEREDMAP.H"
+#include "STRING.h"
 #include "dynarr.h"
 
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+typedef struct database
+{
+    UNORDEREDMAP* idIndex;
+    UNORDEREDMAP* nameIndex;
+    UNORDEREDMAP* vendorIndex;
+    UNORDEREDMAP* keywords;
+} DATABASE;
+
 void keywordSplit(STRING* name, ROW* row, UNORDEREDMAP* index);
-bool insert(ROW* row);
+void keywordSplitRemove(STRING* name, ROW* row, UNORDEREDMAP* index);
 
-int main()
+DATABASE initializeDATABASE(void);
+DATABASE openDATABASE(FILE* fp);
+void writeDATABASE(DATABASE db, FILE* fp);
+void freeDATABASE(DATABASE db);
+
+bool fileExists(const char* filename);
+bool existingDiaryName(STRING* name);
+bool addToDiary(STRING* name);
+void deleteDiaryName(STRING* name);
+void printIndex(void);
+
+void insertDATABASE(DATABASE* database, DA* results);
+void removeDATABASE(DATABASE* database, DA* results);
+
+DA* uniqueDA(DA* input);
+STRING* getDiary(DATABASE* database);
+void useDiary(STRING* diaryName, DATABASE* database, DATABASE* dataset, FILE* out, FILE* in);
+
+void printDiary(DATABASE* database);
+
+int main(void)
 {
-    FILE* fp = fopen("food_nutrient_db.csv", "r");
+    FILE* temp = fopen("./diary_list.txt", "a");
+    if (temp != NULL)
+        fclose(temp);
 
-    DA* rowList = newDA(freeROW);
+    DATABASE dataset;
+    FILE* datasetFile = fopen("food_nutrient_db.csv", "r+");
 
-    UNORDEREDMAP* nameIndex = newUNORDEREDMAP(hashSTRING, compareSTRING, NULL, freeDA);
-    UNORDEREDMAP* vendorIndex = newUNORDEREDMAP(hashSTRING, compareSTRING, NULL, freeDA);
-    UNORDEREDMAP* keywordIndex = newUNORDEREDMAP(hashSTRING, compareSTRING, NULL, freeDA);
-
-    UNORDEREDMAP* diaryNameIndex = newUNORDEREDMAP(hashSTRING, compareSTRING, NULL, freeDA);
-    UNORDEREDMAP* vendorIndex = newUNORDEREDMAP(hashSTRING, compareSTRING, NULL, freeDA);
-    UNORDEREDMAP* keywordIndex = newUNORDEREDMAP(hashSTRING, compareSTRING, NULL, freeDA);
-
-    size_t next = 0;
-
-    while (!feof(fp))
+    if (!fileExists("diary_list.txt"))
     {
-        ROW* row = readROW(fp);
-
-        if (getROWid(row) > next)
-            next = getROWid(row);
-
-        //printf("%zu %s %s\n", getROWid(row), getSTRING(getROWname(row)), getSTRING(getROWvendor(row)));
-        insertDAback(rowList, row);
-
-        void* nameResult = searchUNORDEREDMAP(nameIndex, getROWname(row), NULL);
-
-        if (nameResult == NULL)
-        {
-            DA* matches = newDA(NULL);
-            insertDAback(matches, row);
-            insertUNORDEREDMAP(nameIndex, getROWname(row), matches, NULL);
-        }
-
-        else
-        {
-            DA* matches = (DA*)nameResult;
-            insertDAback(matches, row);
-        }
-        
-        void* vendorResult = searchUNORDEREDMAP(vendorIndex, getROWvendor(row), NULL);
-
-        if (vendorResult == NULL)
-        {
-            DA* matches = newDA(NULL);
-            insertDAback(matches, row);
-            insertUNORDEREDMAP(vendorIndex, getROWvendor(row), matches, NULL);
-        }
-
-        else
-        {
-            DA* matches = (DA*)vendorResult;
-            insertDAback(matches, row);
-        }
-
-        keywordSplit(getROWname(row), row, keywordIndex);
+        printf("Error: cannot find diary list file. Please rerun the program and try again.\n");
+        return 1;
     }
 
-    fclose(fp);
+    if (datasetFile == NULL) {
+        printf("Error: cannot find dataset file.Please make sure you have downloaded the correct dataset file and try again\n");
+        return 1;
+    }
 
-    char ch;
-    scanf("%c", &ch);
+    dataset = openDATABASE(datasetFile);
 
-    while (ch != 'q')
+    STRING* diaryName = NULL;
+
+    do
     {
-        STRING* str = readSTRING(stdin, " ~\n", NULL);
+        DATABASE currentDiary;
+        diaryName = getDiary(&currentDiary);
 
-        while (sizeSTRING(str) == 0)
-        {
-            freeSTRING(str);
-            str = readSTRING(stdin, " ~\n", NULL);
-        }
-
-        UNORDEREDMAP* index;
-
-        switch (ch)
-        {
-        case 'v':
-            index = vendorIndex;
+        if (diaryName == NULL)
             break;
-        case 'n':
-            index = nameIndex;
-            break;
-        case 'k':
-            index = keywordIndex;
 
-            for (size_t i = 0; i < sizeSTRING(str); i++)
-            {
-                setSTRINGchar(str, i, toupper(getSTRINGchar(str, i)));
-            }
+        FILE* file = fopen(getSTRING(diaryName), "r+");
 
-            printf("Query: {%s}\n", getSTRING(str));
-
-            break;
-        default:
-            printf(":-(\n");
-            scanf("%c", &ch);
-            continue;
+        if (!file) {
+            printf("Failed to open diary file\n");
         }
 
-        DA* results = searchUNORDEREDMAP(index, str, NULL);
+        useDiary(diaryName, &currentDiary, &dataset, NULL, file);
+        fclose(file);
+        file = fopen(getSTRING(diaryName), "a");
 
-        if (results == NULL)
-        {
-            printf("No results\n");
+        if (diaryName == NULL) {
+            return 1;
         }
 
-        else
-        {
-            for (size_t i = 0; i < sizeDA(results); i++)
-            {
-                ROW* row = getDA(results, i);
+        printf("Opened diary %s\n", getSTRING(diaryName));
 
-                printf("%zu %s %s\n", getROWid(row), getSTRING(getROWname(row)), getSTRING(getROWvendor(row)));
-            }
-        }
-        
+        useDiary(diaryName, &currentDiary, &dataset, file, stdin);
+        fclose(file);
+    } while (diaryName != NULL);
 
-        scanf("%c", &ch);
-    }
-
-    FILE *fptrread;
-    FILE *fwriter;
-    FILE *freadr;
-    //make sure hashtable has a row of number beside it
-
-    if ((fptrread = fopen("food_nutrient_db.csv", "r")) == NULL)
-    {
-        printf("Error opening file, please try again with the correct file.\n");
-        // Program exits if file pointer returns NULL.
-        exit(1);         
-    }
-
-int choice, choice1, choice2;
-char *diaryname;
-char *searchval;
-char *searchmanu;
-while(1)
-{
-printf("\nEnter 1 to create a new user diary.\n");
-printf("Enter 2 to update an existing user diary.\n");
-printf("Enter 3 to delete an existing user diary.\n");
-printf("Enter 4 to Exit.\n");
-printf("Your choice?\n");
-
-if (scanf("%d",&choice) != 1) {
-    printf("Invalid input >:-(\n");
-    continue;
-}
-switch(choice)
-{
-case 1:
-printf("What would you like your new user diary to be named?\n");
-scanf("%s",diaryname);
-printf("\nCreating User Diary %s\n",diaryname);
-printf("\n");
-/*creating file*/
-    fwriter=fopen(diaryname,"w");
-    /*check file created or not*/
-    if(fwriter==NULL)
-    {
-        printf("File not created, please try again");
-        break;
-    }
- 
-    printf("File created successfully \n");
-    break;
-    /*writting into file
-    int x = 0;
-    while(x!=1){
-    printf("Enter 1 to add an item to the log\n Enter 2 to delete an item from the log\n Enter 3 to go back to the Menu");
-    printf("\nYour choice?\n");
-    scanf("%d",&choice1);
-    switch(choice1){
-        case 1:
-        printf("\nPlease enter the name of the item you would like to add.\n");
-        scanf("%s",searchval);
-        //searchfunction
-        //display search array on the screen with a number beside it
-       /* printf("Enter 1 to filter your search for a specific manufacturer, or 0 to skip");
-        scanf("%d",choice2);
-        switch (choice2)
-        {
-            case 0:
-                break;
-            case 1:
-            printf(\n"Please enter the name of the manufacturer."\n);
-            scanf("%s",searchmanu);
-            //search function for manufacturer
-            //display search results
-            default:
-                printf("Incorrect Choice");
-                break;
-        }
-
-        int i;
-        printf("\nPlease enter the number that matches your selection:\n");
-        scanf("%d",&i);
-        // insert the value from the search results that matches the value i to diaryname file line by line
-        break;
-
-        case 2:
-         fwriter = fopen(diaryname,"r");
-        // Read contents from file 
-        printf("\nDisplaying the contents of the file for deletion. \n");
-        //display contents of file line by line with number beside it
-         char c = fgetc(fwriter); 
-        while (c != EOF) 
-           { 
-        printf ("%c", c); 
-        c = fgetc(fwriter); 
-             } 
-        int j;
-        printf("\nPlease enter the number that matches the item you want to delete in the file:\n");
-        scanf("%d",&j);
-        // delete the value from the search results that matches the number j in diaryname file
-        break;
-        case 3:
-        x = 1;
-        break;
-        default:
-        printf("Invalid Choice");
-        break;
-        */
-case 2:
-printf("\n Please enter the name of the User Diary you need to update: \n");
-scanf("%s",diaryname);
-if (diaryname)
-freadr=fopen(diaryname,"r");
-    /*check if file is created or not*/
-    if(freadr==NULL)
-    {
-        printf("File does not exist, please try again\n");
-        break;
-    }
-    fclose(freadr);
-    printf("\nUser diary found, opening log:\n");
-    /*writing into file*/
-    freadr=fopen(diaryname,"w");
-   /*writting into file
-    int x = 0;
-    while(x!=1){
-    printf("Enter 1 to add an item to the log\n Enter 2 to delete an item from the log\n Enter 3 to go back to the Menu");
-    printf("\nYour choice?\n");
-    scanf("%d",&choice1);
-    switch(choice1){
-        case 1:
-        printf("\nPlease enter the name of the item you would like to add.\n");
-        scanf("%s",searchval);
-        //searchfunction
-        //display search array on the screen with a number beside it
-       /* printf("Enter 1 to filter your search for a specific manufacturer, or 0 to skip");
-        scanf("%d",choice2);
-        switch (choice2)
-        {
-            case 0:
-                break;
-            case 1:
-            printf(\n"Please enter the name of the manufacturer."\n);
-            scanf("%s",searchmanu);
-            //search function for manufacturer
-            //display search results
-            default:
-                printf("Incorrect Choice")
-                break;
-        }
-
-        int i;
-        printf("\nPlease enter the number that matches your selection:\n");
-        scanf("%d",&i);
-        // insert the value from the search results that matches the value i to diaryname file line by line
-        break;
-
-        case 2:
-         fwriter = fopen(diaryname,"r");
-        // Read contents from file 
-        printf("\nDisplaying the contents of the file for deletion. \n");
-        //display contents of file line by line with number beside it
-         char c = fgetc(fwriter); 
-        while (c != EOF) 
-           { 
-        printf ("%c", c); 
-        c = fgetc(fwriter); 
-             } 
-        int j;
-        printf("\nPlease enter the number that matches the item you want to delete in the file:\n");
-        scanf("%d",&j);
-        // delete the value from the search results that matches the number j in diaryname file
-        break;
-        case 3:
-        x = 1;
-        break;
-        default:
-        printf("Invalid Choice");
-        break;
-        */
-break; //Takes control out of switch
-case 3:
-printf("\n Please enter the name of the User Diary you need to delete: \n");
-scanf("%s",diaryname);
-freadr=fopen(diaryname,"r");
-    /*check file exists or not*/
-    if(freadr==NULL)
-    {
-        printf("\nFile does not exist, please try again\n");
-        break;
-    }
-  int status=1;
-  status = remove(diaryname);
- 
-  if (status == 0)
-  {
-    printf("\n%s file deleted successfully.\n", diaryname);
-  }
-  else
-  {
-    printf("\nUnable to delete the file\n"); 
-  }
-
-break; //Takes control out of switch
-default:
-printf("Incorrect choice input, please try again!");
-exit(1);
-}
-}
     return 0;
 }
 
+
 void keywordSplit(STRING* name, ROW* row, UNORDEREDMAP* index)
 {
-    STRING* temp = cloneSTRING(name);
-    char* data = getSTRING(temp);
-    data = strtok(data, " ");
+    char* data = malloc(sizeof(char) * (strlen(getSTRING(name)) + 1));
+    char* old = data;
+
+    strcpy(old, getSTRING(name));
+    data = strtok(old, " ");
 
     while ((data = strtok(NULL, " ")) != NULL)
     {
@@ -366,5 +124,685 @@ void keywordSplit(STRING* name, ROW* row, UNORDEREDMAP* index)
         }
     }
 
-    freeSTRING(temp);
+    free(old);
+}
+
+DATABASE initializeDATABASE(void)
+{
+    DATABASE database;
+    database.nameIndex = newUNORDEREDMAP(hashSTRING, compareSTRING, NULL, NULL);
+    database.vendorIndex = newUNORDEREDMAP(hashSTRING, compareSTRING, NULL, NULL);
+    database.keywords = newUNORDEREDMAP(hashSTRING, compareSTRING, freeSTRING, (void(*)(void*))freeDA);
+    database.idIndex = newUNORDEREDMAP(hashINTEGER, compareINTEGER, NULL, NULL);
+
+    return database;
+}
+
+DATABASE openDATABASE(FILE* fp)
+{
+    DATABASE database = initializeDATABASE();
+
+    while (!feof(fp))
+    {
+        ROW* row = readROW(fp);
+
+        if (row == NULL) {
+            break;
+        }
+
+        insertUNORDEREDMAP(database.nameIndex, getROWname(row), row, NULL);
+        insertUNORDEREDMAP(database.vendorIndex, getROWname(row), row, NULL);
+        insertUNORDEREDMAP(database.idIndex, getROWid(row), row, NULL);
+        keywordSplit(getROWname(row), row, database.keywords);
+    }
+    return database;
+}
+
+void freeDATABASE(DATABASE db)
+{
+    freeUNORDEREDMAP(db.keywords);
+    freeUNORDEREDMAP(db.idIndex);
+    freeUNORDEREDMAP(db.vendorIndex);
+    freeUNORDEREDMAP(db.nameIndex);
+}
+
+bool fileExists(const char* filename)
+{
+    return access(filename, F_OK) != -1;
+}
+
+bool existingDiaryName(STRING* name)
+{
+    assert(name != NULL);
+
+    FILE* list = fopen("diary_list.txt", "r+");
+
+    if (list == NULL)
+    {
+        printf("Error: could not open diary_list.txt\n");
+        return false;
+    }
+
+    int last;
+    STRING* current = readSTRING(list, "\n", &last);
+
+    while (!feof(list)) {
+        if (compareSTRING(current, name)) {
+            if (!fileExists(getSTRING(name))) {
+                FILE* file = fopen(getSTRING(name), "w");
+                fclose(file);
+            }
+
+            freeSTRING(current);
+            fclose(list);
+
+            return true;
+        }
+
+        freeSTRING(current);
+        current = readSTRING(list, "\n", &last);
+    }
+
+    if (compareSTRING(current, name)) {
+        freeSTRING(current);
+        fclose(list);
+
+        return true;
+    }
+
+    freeSTRING(current);
+    fclose(list);
+    return false;
+}
+
+bool addToDiary(STRING* name)
+{
+    assert(name != NULL);
+
+    if (!fileExists(getSTRING(name))) {
+        FILE* file = fopen(getSTRING(name), "w");
+        fclose(file);
+    }
+
+    if (existingDiaryName(name)) {
+        return true;
+    }
+
+    FILE* file = fopen("diary_list.txt", "a+");
+    fprintf(file, "%s\n", getSTRING(name));
+    fclose(file);
+
+    return true;
+}
+
+STRING* getDiary(DATABASE* database)
+{
+    STRING* quit = newSTRING("quit");
+    STRING* delete = newSTRING("delete");
+    STRING* open = newSTRING("open");
+    STRING* list = newSTRING("list");
+
+    printf("Please input one of the following commands:\n");
+    printf("\tdelete <diary>\n");
+    printf("\topen <diary>\n");
+    printf("\tlist\n");
+    printf("\tquit\n");
+
+    STRING* returnValue = NULL;
+
+    while (!feof(stdin))
+    {
+        int terminator;
+        STRING* command = readSTRING(stdin, " \n\t", &terminator);
+
+        if (terminator == EOF)
+        {
+            freeSTRING(command);
+            break;
+        }
+
+        if (compareSTRING(command, quit)) {
+            freeSTRING(command);
+            break;
+        }
+
+        if (strcmp(getSTRING(command), "list") == 0) {
+            printIndex();
+        }
+
+        if (compareSTRING(command, open)) {
+            freeSTRING(command);
+            STRING* diaryName = readSTRING(stdin, " \t\n", &terminator);
+
+            if (!existingDiaryName(diaryName)) {
+                if (fileExists(getSTRING(diaryName))) {
+                    printf("Error: file \"%s\" already exists!\n", getSTRING(diaryName));
+                    freeSTRING(diaryName);
+                }
+
+                else if (!addToDiary(diaryName)) {
+                    printf("Failed to create diary \"%s\"\n", getSTRING(diaryName));
+                    freeSTRING(diaryName);
+                }
+
+                else {
+                    returnValue = diaryName;
+                    *database = initializeDATABASE();
+                    break;
+                }
+                
+
+            }
+
+            else {
+                returnValue = diaryName;
+                *database = initializeDATABASE();
+                break;
+            }
+        }
+
+        else if (compareSTRING(command, delete)) {
+            freeSTRING(command);
+            STRING* diaryName = readSTRING(stdin, " \t\n", &terminator);
+
+            if (!existingDiaryName(diaryName)) {
+                printf("Error: diary \"%s\" does not exist. Please try again with the right command.\n", getSTRING(diaryName));
+            }
+
+            else {
+                deleteDiaryName(diaryName);
+            }
+
+            freeSTRING(diaryName);
+        }
+
+        else
+        {
+            printf("Command \"%s\" not recognized\n", getSTRING(command));
+            freeSTRING(command);
+        }
+        
+    }
+
+    freeSTRING(list);
+    freeSTRING(quit);
+    freeSTRING(delete);
+    freeSTRING(open);
+
+    return returnValue;
+}
+
+void deleteDiaryName(STRING* name)
+{
+    FILE* tempFile = NULL;
+    char* tempName = NULL;
+
+    while (tempFile == NULL)
+    {
+        tempName = tmpnam(NULL);
+        tempFile = fopen(tempName, "w+");
+    }
+
+    FILE* file = fopen("./diary_list.txt", "r+");
+
+    if (file == NULL) {
+        printf("Error: could not open diary_list.txt\n");
+        fclose(tempFile);
+        remove(tempName);
+        fclose(file);
+        exit(1);
+    }
+
+    while (!feof(file))
+    {
+        int delim;
+        STRING* line = readSTRING(file, " \n", &delim);
+
+        if (compareSTRING(line, name))
+            continue;
+        else if (delim != EOF)
+            fprintf(tempFile, "%s%c", getSTRING(line), (char)delim);
+        else
+            fprintf(tempFile, "%s", getSTRING(line));
+
+        freeSTRING(line);
+    }
+
+    if (rename(tempName, "./diary_list.txt") != 0) {
+        printf("Error: failed to swap files\n");
+        fclose(tempFile);
+        remove(tempName);
+        fclose(file);
+        exit(1);
+    }
+
+    if (remove(getSTRING(name)) != 0) {
+        printf("Failed to delete diary file \"%s\"\n", getSTRING(name));
+        exit(1);
+    }
+}
+
+void printIndex(void) {
+    FILE* list = fopen("./diary_list.txt", "r+");
+
+    if (list == NULL) {
+        printf("Error: could not find diary list\n");
+        return;
+    }
+
+    int current = fgetc(list);
+
+    while (!feof(list))
+    {
+        putc(current, stdout);
+        current = fgetc(list);
+    }
+}
+
+void useDiary(STRING* diaryName, DATABASE* database, DATABASE* dataset, FILE* out, FILE* in)
+{
+    STRING* command = NULL;
+
+    while (command == NULL || !feof(in))
+    {
+        if (in == stdin) {
+            printf("Please input one of the following commands:\n");
+            printf("\tquery <keyword|id> <key>\n");
+            printf("\tdelete <keyword|id> <key>\n");
+            printf("\tinsert <keyword|id> <key>\n");
+            printf("\tprint (shows current diary items)\n");
+            printf("\tquit\n");
+        }
+
+        command = readSTRING(in, " \t\n", NULL);
+
+        if (strcmp(getSTRING(command), "print") == 0) {
+            freeSTRING(command);
+            command = NULL;
+            printDiary(database);
+            continue;
+        }
+
+        else if (strcmp(getSTRING(command), "query") == 0) {
+            STRING* name = readSTRING(in, " \t\n", NULL);
+            void* query = readSTRING(in, " \t\n", NULL);
+            void(*freer)(void*) = freeSTRING;
+
+            UNORDEREDMAP* index = NULL;
+
+            /*if (strcmp(getSTRING(name), "name") == 0) {
+                index = dataset->nameIndex;
+            }
+            else if (strcmp(getSTRING(name), "vendor") == 0) {
+                index = dataset->vendorIndex;
+            }
+            else*/ if (strcmp(getSTRING(name), "keyword") == 0) {
+                index = dataset->keywords;
+            }
+            else if (strcmp(getSTRING(name), "id") == 0) {
+                index = dataset->idIndex;
+            }
+            else if (in == stdin) {
+                printf("Error: can not look up on \"%s\"\n", getSTRING(name));
+            }
+
+            if (strcmp(getSTRING(name), "id") == 0) {
+                size_t v;
+                sscanf(getSTRING((STRING*)query), "%zu", &v);
+                freeSTRING(query);
+                query = newINTEGER(v);
+                freer = freeINTEGER;
+            }
+
+            freeSTRING(command);
+            freeSTRING(name);
+
+            if (index == NULL) {
+                continue;
+            }
+
+            DA* results = NULL;
+
+            if (index == dataset->keywords) {
+                results = searchUNORDEREDMAP(index, query, NULL);
+
+                DA* next = newDA(NULL);
+
+                if (results != NULL) {
+                    for (size_t i = 0; i < sizeDA(results); i++) {
+                        insertDAback(next, getDA(results, i));
+                    }
+                }
+
+                results = next;
+            }
+            
+            else {
+                results = newDA(NULL);
+                void* row = searchUNORDEREDMAP(index, query, NULL);
+
+                if (row != NULL) {
+                    insertDAback(results, row);
+                }
+            }
+
+            if (results == NULL || sizeDA(results) == 0) {
+                if (in == stdin)
+                    printf("No results found\n");
+            }
+
+            else {
+                if (in == stdin)
+                    printf("Found %zu results\n", sizeDA(results));
+                DA* unique = uniqueDA(results);
+                freeDA(results);
+                results = unique;
+
+                for (size_t i = 0; i < sizeDA(results); i++) {
+                    printROW(getDA(results, i), stdout);
+                    printf("\n");
+                }
+            }
+
+            if (results != NULL) {
+                freeDA(results);
+            }
+
+            freer(query);
+        }
+
+        else if (strcmp(getSTRING(command), "insert") == 0) {
+            STRING* name = readSTRING(in, " \t\n", NULL);
+            void* query = readSTRING(in, " \t\n", NULL);
+            void(*freer)(void*) = freeSTRING;
+
+            UNORDEREDMAP* index = NULL;
+
+            /*if (strcmp(getSTRING(name), "name") == 0) {
+                index = dataset->nameIndex;
+            }
+            else if (strcmp(getSTRING(name), "vendor") == 0) {
+                index = dataset->vendorIndex;
+            }
+            else */if (strcmp(getSTRING(name), "keyword") == 0) {
+                index = dataset->keywords;
+            }
+            else if (strcmp(getSTRING(name), "id") == 0) {
+                index = dataset->idIndex;
+            }
+            else if (in == stdin) {
+                printf("Error: can not look up on \"%s\"\n", getSTRING(name));
+            }
+
+            if (index != NULL && out != NULL) {
+                fprintf(out, "%s %s %s\n", getSTRING(command), getSTRING(name), getSTRING((STRING*)query));
+            }
+
+            if (strcmp(getSTRING(name), "id") == 0) {
+                size_t v;
+                sscanf(getSTRING((STRING*)query), "%zu", &v);
+                freeSTRING(query);
+                query = newINTEGER(v);
+                freer = freeINTEGER;
+            }
+
+            freeSTRING(command);
+            freeSTRING(name);
+
+            if (index == NULL) {
+                continue;
+            }
+
+            DA* results = NULL;
+
+            if (index == dataset->keywords) {
+                results = searchUNORDEREDMAP(index, query, NULL);
+
+                DA* next = newDA(NULL);
+
+                if (results != NULL) {
+                    for (size_t i = 0; i < sizeDA(results); i++) {
+                        insertDAback(next, getDA(results, i));
+                    }
+                }
+
+                results = next;
+            }
+            
+            else {
+                results = newDA(NULL);
+                void* row = searchUNORDEREDMAP(index, query, NULL);
+
+                if (row != NULL) {
+                    insertDAback(results, row);
+                }
+            }
+
+            if (results == NULL || sizeDA(results) == 0) {
+                if (in == stdin)
+                    printf("No results found\n");
+            }
+
+            else {
+                if (in == stdin)
+                    printf("Found %zu results\n", sizeDA(results));
+                insertDATABASE(database, results);
+            }
+
+            if (results != NULL) {
+                freeDA(results);
+            }
+
+            freer(query);
+        }
+
+        else if (strcmp(getSTRING(command), "delete") == 0) {
+            STRING* name = readSTRING(stdin, " \t\n", NULL);
+            void* query = readSTRING(stdin, " \t\n", NULL);
+            void(*freer)(void*) = freeSTRING;
+
+            UNORDEREDMAP* index = NULL;
+
+            if (strcmp(getSTRING(name), "name") == 0) {
+                index = database->nameIndex;
+            }
+            else if (strcmp(getSTRING(name), "vendor") == 0) {
+                index = database->vendorIndex;
+            }
+            else if (strcmp(getSTRING(name), "keyword") == 0) {
+                index = database->keywords;
+            }
+            else if (strcmp(getSTRING(name), "id") == 0) {
+                index = dataset->idIndex;
+            }
+            else if (in == stdin) {
+                printf("Error: can not look up on \"%s\"\n", getSTRING(name));
+            }
+
+            if (index != NULL && out != NULL) {
+                fprintf(out, "%s %s %s\n", getSTRING(command), getSTRING(name), getSTRING((STRING*)query));
+            }
+
+            if (strcmp(getSTRING(name), "id") == 0) {
+                size_t v;
+                sscanf(getSTRING((STRING*)query), "%zu", &v);
+                freeSTRING(query);
+                query = newINTEGER(v);
+                freer = freeINTEGER;
+            }
+
+            freeSTRING(name);
+            freeSTRING(command);
+
+            if (index == NULL) {
+                continue;
+            }
+
+            DA* results = NULL;
+
+            if (index == database->keywords) {
+                results = searchUNORDEREDMAP(index, query, NULL);
+
+                DA* next = newDA(NULL);
+
+                if (results != NULL) {
+                    for (size_t i = 0; i < sizeDA(results); i++) {
+                        insertDAback(next, getDA(results, i));
+                    }
+                }
+
+                results = next;
+            }
+            
+            else {
+                results = newDA(NULL);
+                void* row = searchUNORDEREDMAP(index, query, NULL);
+
+                if (row != NULL) {
+                    insertDAback(results, row);
+                }
+            }
+
+            if (results == NULL || sizeDA(results) == 0) {
+                if (in == stdin)
+                    printf("No items to delete\n");
+            }
+
+            else {
+                if (in == stdin)
+                    printf("Found %zu results\n", sizeDA(results));
+                removeDATABASE(database, results);
+            }
+
+            if (results != NULL) {
+                freeDA(results);
+            }
+
+            freer(query);
+        }
+
+        else if (strcmp(getSTRING(command), "quit") == 0) {
+            freeSTRING(command);
+
+            if (in == stdin && out != NULL) {
+                fprintf(out, "\n");
+            }
+
+            return;
+        }
+
+        else
+        {
+            if (in == stdin)
+                printf("Command \"%s\" not recognised\n", getSTRING(command));
+            freeSTRING(command);
+        }
+        
+    }
+}
+
+void diaryPrinter(void* key, void* entry, void* extra) {
+    (void)key;
+    (void)extra;
+
+    ROW* entryRow = entry;
+    printROW(entryRow, stdout);
+    printf("\n");
+}
+
+void printDiary(DATABASE* database)
+{
+    foreachUNORDEREDMAP(database->nameIndex, diaryPrinter, NULL);
+}
+
+void insertDATABASE(DATABASE* database, DA* results)
+{
+    assert(database != NULL);
+    assert(results != NULL);
+
+    results = uniqueDA(results);
+
+    for (size_t i = 0; i < sizeDA(results); i++) {
+        ROW* entry = getDA(results, i);
+
+        if (searchUNORDEREDMAP(database->nameIndex, getROWname(entry), NULL) == NULL) {
+            insertUNORDEREDMAP(database->nameIndex, getROWname(entry), entry, NULL);
+            insertUNORDEREDMAP(database->vendorIndex, getROWvendor(entry), entry, NULL);
+            insertUNORDEREDMAP(database->idIndex, getROWid(entry), entry, NULL);
+            keywordSplit(getROWname(entry), entry, database->keywords);
+        }
+    }
+}
+
+void fillUnique(void* key, void* value, void* da) {
+    (void)key;
+    insertDAback((DA*)da, value);
+}
+
+DA* uniqueDA(DA* input) {
+    assert(input != NULL);
+
+    UNORDEREDMAP* set = newUNORDEREDMAP(hashSTRING, compareSTRING, NULL, NULL);
+
+    for (size_t i = 0; i < sizeDA(input); i++) {
+        insertUNORDEREDMAP(set, getROWname((ROW*)getDA(input, i)), getDA(input, i), NULL);
+    }
+
+    DA* unique = newDA(NULL);
+
+    foreachUNORDEREDMAP(set, fillUnique, unique);
+    freeUNORDEREDMAP(set);
+
+    return unique;
+}
+
+void removeDATABASE(DATABASE* database, DA* results)
+{
+    assert(database != NULL);
+    assert(results != NULL);
+
+    results = uniqueDA(results);
+
+    for (size_t i = 0; i < sizeDA(results); i++) {
+        printROW(getDA(results, i), stdout);
+        printf("\n");
+
+        ROW* current = getDA(results, i);
+
+        keywordSplitRemove(getROWname(current), current, database->keywords);
+        deleteUNORDEREDMAP(database->idIndex, getROWid(current), NULL, NULL);
+        deleteUNORDEREDMAP(database->vendorIndex, getROWvendor(current), NULL, NULL);
+        deleteUNORDEREDMAP(database->nameIndex, getROWname(current), NULL, NULL);
+    }
+}
+
+void keywordSplitRemove(STRING* name, ROW* row, UNORDEREDMAP* index)
+{
+    char* data = malloc(sizeof(char) * (strlen(getSTRING(name)) + 1));
+    char* old = data;
+
+    strcpy(old, getSTRING(name));
+    data = strtok(old, " ");
+
+    while ((data = strtok(NULL, " ")) != NULL)
+    {
+        STRING* keyword = newSTRING(data);
+
+        DA* array = searchUNORDEREDMAP(index, keyword, NULL);
+
+        if (array != NULL)
+        {
+            for (size_t i = 0; i < sizeDA(array); i++) {
+                if (getDA(array, i) == row) {
+                    removeDA(array, i--);
+                }
+            }
+
+            if (sizeDA(array) == 0) {
+                deleteUNORDEREDMAP(index, keyword, NULL, NULL);
+            }
+        }
+    }
+
+    free(old);
 }
