@@ -21,7 +21,7 @@
 <li><strong>Quit (quit)</strong> <br />Enter "quit" to exit the menu.</li>
 </ul>
 <p><strong> 2) Delete Diary (delete "diaryname")</strong> Use this command to delete a diary that has already been created. To execute this command, input "delete" followed by the name of the diary you want to delete. For example, to delete the diary Nehal input "delete Nehal".</p>
-<p><strong> 3) View all the diaries stored in the system (view list) </strong> This command will show you all the diaries currently in the system and will help you keep track of them. To execute this command, enter the following input "view list".</p>
+<p><strong> 3) View all the diaries stored in the system (list) </strong> This command will show you all the diaries currently in the system and will help you keep track of them. To execute this command, enter the following input "list".</p>
 </n>
 <p><strong> 4)Quit ("quit") </strong> This command will quit the program completely. To execute this command, enter "quit".</p>
 </n>
