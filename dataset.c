@@ -1,13 +1,20 @@
 #include "dataset.h"
 #include <assert.h>
 
-/* Linked list structure */
-       typedef struct list
-       {
-           char *string;
-           int index;
-           struct list *next
-       } list_t ;
+/* Food struct */
+       typedef struct fooddata
+       {   int productid;
+           char *productname;
+           char *manu;
+           float energyunits;
+           float carbunits;
+           float fatunits;
+           float proteinunits;
+           float servingsizegml;
+           char gml[10];
+           float servingsize;
+           char ssunits[15];
+       }  
    
 
 // Creates a DATASET from the filename
@@ -16,7 +23,7 @@ DATASET* newDATASET(char* filename)
     DATASET* dataset = malloc(sizeof(DATASET));
     assert(dataset != NULL);
 
-    FILE* file = fopen(filename, "r");
+    FILE* file = fopen(food_nutrient_db, "r");
 
     // loop to read food types into dataset
 
