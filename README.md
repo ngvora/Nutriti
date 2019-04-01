@@ -6,11 +6,11 @@ Nutrition Diary Food Tracker is an application that allows you to create specifi
 
 # Files to Download 
 
-FDA Food Database File to be read by the program can be downloaded using this link. 
+FDA Food Database File to be read by the program can be downloaded using this link. Please ensure that you have this file inside the folder of the program for it to work.
 https://drive.google.com/file/d/1CU04kfc18ld8KZqVt0BeBIXa0aTGnjQ6/view?usp=sharing
 
 # How to use
-Video Demo Link:
+<b>Video Demo Link: </b></n>
 In your terminal, change the directory to the folder the program is in and input the following command:</n>
 <b> gcc -Wall string.c dynamic.c UNORDEREDSET.c UNORDEREDMAP.c main2.c ROW.c -g3 </b> </n>
 
@@ -50,9 +50,9 @@ The program will present you with the following options:</n>
 <b> 3) Delete Diary (delete <diaryname>)</b> </n>
  Use this command to delete a diary that has already been created. To execute this command, input "delete" followed by the name of the diary you want to delete.
  For example, to delete the diary Nehal input "delete Nehal".
-</b> 4) View all the diaries stored in the system (view list) <b> </n>
+<b> 4) View all the diaries stored in the system (view list) </b> </n>
 This command will show you all the diaries currently in the system and will help you keep track of them.
 To execute this command, enter the following input "view list".
- 
+ </n>
 # Additional Notes
 This program uses hashtables and dynammic arrays to load the database in. It has an average search time of O(logn).
