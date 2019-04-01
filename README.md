@@ -13,7 +13,7 @@ Video Demo Link:https://youtu.be/ERB5318RNdw
 
 In your terminal, change the directory to the folder the program is in and input the following command: 
 
-gcc -Wall string.c dynamic.c UNORDEREDSET.c UNORDEREDMAP.c main2.c ROW.c -g3
+<h3>make</h3>
 
 The program will present you with the following options:
 
