@@ -1,9 +1,11 @@
 # Nutrition Diary CS 201 Portfolio Project - Nehal Vora
 # What it is
 <p>Nutrition Diary Food Tracker is an application that allows you to create specific user diaries and search a food item to input from the FDA food database into your diary. It allows you to edit and update an existing user diary and gives you to option to add or delete food items from that file. It also keeps track of all the user diaries in the <em>diary_list.txt</em> file.</p>
+</n>
 # Files to Download
 <p>FDA Food Database File to be read by the program can be downloaded using this link. Please ensure that you have this file inside the folder of the program for it to work.</p>
 <p>https://drive.google.com/file/d/1CU04kfc18ld8KZqVt0BeBIXa0aTGnjQ6/view?usp=sharing </p>
+</n>
 # How to use
 <p><strong>Video Demo Link: </strong></p>
 <p>In your terminal, change the directory to the folder the program is in and input the following command:&nbsp;</p>
@@ -29,5 +31,6 @@
 </ul>
 <p><strong> 3) Delete Diary (delete "diaryname")</strong> Use this command to delete a diary that has already been created. To execute this command, input "delete" followed by the name of the diary you want to delete. For example, to delete the diary Nehal input "delete Nehal".</p>
 <p><strong> 4) View all the diaries stored in the system (view list) </strong> This command will show you all the diaries currently in the system and will help you keep track of them. To execute this command, enter the following input "view list".</p>
+</n>
 # Additional Notes
 <p>This program uses hashtables and dynammic arrays to load the database in. It has an average search time of O(logn).</p>
