@@ -11,6 +11,8 @@ STRING* newSTRING(const char* buffer);
 
 STRING* cloneSTRING(STRING* str);
 
+STRING* upperSTRING(STRING* str);
+
 STRING* readSTRING(FILE* file, const char* delim, int* last);
 
 size_t sizeSTRING(STRING* str);
