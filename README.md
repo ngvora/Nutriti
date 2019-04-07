@@ -27,9 +27,9 @@
 <p>Delete Diary (delete "diaryname") <br />Use this command to delete a diary that has already been created. To execute this command, input "delete" followed by the name of the diary you want to delete. For example, to delete the diary Nehal input "delete Nehal".</p>
 </li>
 <li>
-<p>View all the diaries stored in the system (list) <br />This command will show you all the diaries currently in the system and will help you keep track of them. To execute this command, enter the following input "list".</p>
+ <p><b>View all the diaries stored in the system (list)</b> <br />This command will show you all the diaries currently in the system and will help you keep track of them. To execute this command, enter the following input "list".</p>
 </li>
 </ol>
-<p>&nbsp; &nbsp;4.Quit ("quit") <br />&nbsp; &nbsp; &nbsp; This command will quit the program completely. To execute this command,&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; enter "quit".</p>
+<p><b>4.Quit ("quit") </b><br>&nbsp; &nbsp; &nbsp; This command will quit the program completely. To execute this command enter "quit".</p>
 <h2>Additional Notes</h2>
 <p>This program uses hashtables and dynamic arrays to load the database in. It has an average search time of O(logn).</p>
