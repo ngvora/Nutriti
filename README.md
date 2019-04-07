@@ -27,6 +27,7 @@
 
  <p><b>3.View all the diaries stored in the system (list)</b> <br />This command will show you all the diaries currently in the system and will help you keep track of them. To execute this command, enter the following input "list".</p>
 </ol>
-<p><b>4.Quit ("quit") </b><br>&nbsp; &nbsp; &nbsp; This command will quit the program completely. To execute this command enter "quit".</p>
+<p><b>4.Quit ("quit")</p> </b>
+ <p>This command will quit the program completely. To execute this command enter "quit".</p>
 <h2>Additional Notes</h2>
 <p>This program uses hashtables and dynamic arrays to load the database in. It has an average search time of O(logn).</p>
