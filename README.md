@@ -22,13 +22,10 @@
 <p>To delete a food from the diary, enter "delete" followed by "keyword|id" where keyword is for general items you want to delete that has those keywords in it and ID is for the specific element with that ID. This will delete the food item that matches your input. 
  <p> d) Print Current Diary (print)</p><p> To print the user nutrition diary, enter "print". </p>
  <p> e) Quit (quit)</p> <p>Enter "quit" to exit the menu.</p>
-<ol start="2">
-<li>
-<p>Delete Diary (delete "diaryname") <br />Use this command to delete a diary that has already been created. To execute this command, input "delete" followed by the name of the diary you want to delete. For example, to delete the diary Nehal input "delete Nehal".</p>
-</li>
-<li>
- <p><b>View all the diaries stored in the system (list)</b> <br />This command will show you all the diaries currently in the system and will help you keep track of them. To execute this command, enter the following input "list".</p>
-</li>
+
+ <p><b>2.Delete Diary (delete "diaryname")</b> <br />Use this command to delete a diary that has already been created. To execute this command, input "delete" followed by the name of the diary you want to delete. For example, to delete the diary Nehal input "delete Nehal".</p>
+
+ <p><b>3.View all the diaries stored in the system (list)</b> <br />This command will show you all the diaries currently in the system and will help you keep track of them. To execute this command, enter the following input "list".</p>
 </ol>
 <p><b>4.Quit ("quit") </b><br>&nbsp; &nbsp; &nbsp; This command will quit the program completely. To execute this command enter "quit".</p>
 <h2>Additional Notes</h2>
