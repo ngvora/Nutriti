@@ -1,4 +1,4 @@
-<h1>Nutrition Diary CS 201 Portfolio Project - Nehal Vora</h1>
+<h1>Nutriti - Nutrition Tracker + Food Diary</h1>
 <h2><a id="user-content-what-it-is" class="anchor" href="https://github.com/ngvora/Nutrition-CRUD-Database-Log-CS-201-#what-it-is" aria-hidden="true"></a>What it is</h2>
 <p>Nutrition Diary Food Tracker is an application that allows you to create specific user diaries and search a food item to input from the FDA food database into your diary. It allows you to edit and update an existing user diary and gives you to option to add or delete food items from that file. It also keeps track of all the user diaries in the diary_list.txt file.</p>
 <h2><a id="user-content-files-to-download" class="anchor" href="https://github.com/ngvora/Nutrition-CRUD-Database-Log-CS-201-#files-to-download" aria-hidden="true"></a>Files to download</h2>
