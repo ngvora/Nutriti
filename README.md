@@ -1,6 +1,6 @@
 <h1>Nutriti - Nutrition Tracker + Food Diary</h1>
 <h2><a id="user-content-what-it-is" class="anchor" href="https://github.com/ngvora/Nutrition-CRUD-Database-Log-CS-201-#what-it-is" aria-hidden="true"></a>What it is</h2>
-<p>Nutrition Diary Food Tracker is an application that allows you to create specific user diaries and search a food item to input from the FDA food database into your diary. It allows you to edit and update an existing user diary and gives you to option to add or delete food items from that file. It also keeps track of all the user diaries in the diary_list.txt file.</p>
+<p>Nutriti is a food diary and nutriton tracker application that allows you to create specific user diaries and search a food item to input from the FDA food database into your diary. It allows you to edit and update an existing user diary and gives you to option to add or delete food items from that file. It also keeps track of all the user diaries in the diary_list.txt file.</p>
 <h2><a id="user-content-files-to-download" class="anchor" href="https://github.com/ngvora/Nutrition-CRUD-Database-Log-CS-201-#files-to-download" aria-hidden="true"></a>Files to download</h2>
 <p>FDA Food Database File to be read by the program can be downloaded using this link. Please ensure that you have this file inside the folder of the program for it to work.</p>
 <p><a href="https://drive.google.com/file/d/1CU04kfc18ld8KZqVt0BeBIXa0aTGnjQ6/view?usp=sharing" rel="nofollow">https://drive.google.com/file/d/1CU04kfc18ld8KZqVt0BeBIXa0aTGnjQ6/view?usp=sharing</a></p>
